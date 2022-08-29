@@ -10,10 +10,10 @@ function Calculator() {
     height: 168,
     isMale: true,
     bodyWeight: 75,
-    bodyFat: 27,
+    bodyFat: 26,
     activity: 1.3,
     intensity: -10,
-    proteinIntake: 1.2,
+    proteinIntake: 1.35,
     fatIntake: 35
   })
 
@@ -29,12 +29,19 @@ function Calculator() {
     });
   }
 
+  function handleCheck(event){
+    setBB({
+      ...bb,
+      isMale: !bb.isMale
+    });
+  }
+
   useEffect(() => {
     let extra = bb.isMale ? 5 : -161;
     let bmr = (10 * bb.bodyWeight) + (6.25 * bb.height) - (5 * bb.age) + extra;
     let lean_body_mass = bb.bodyWeight * ((100-bb.bodyFat)/100)
 
-    setCalories(bmr*(bb.activity) + bmr*(bb.intensity/100))
+    setCalories(Math.round(bmr*(bb.activity) + bmr*(bb.intensity/100)))
     setProtein(Math.round(lean_body_mass * bb.proteinIntake * 2.204623))
     setFat(Math.round((calories * (bb.fatIntake/100))/9))
     setCarbs(Math.round((calories - (4*protein) - (9*fat))/4))
@@ -42,13 +49,19 @@ function Calculator() {
 
   return (
     <div className="grid w-full pt-8 place-content-center items-stretch">
-      <div className="bg-red-100 rounded-md">
+      <div className="">
         <h1 className="font-bold">Recomposition Calculator</h1>
-        <form className="w-full">
-          <div className="grid gap-1 mb-6 lg:grid-cols-1">
+        <h2 className="pb-4">Source: "The Ultimate Guide To Body Recomposition" by Jeff Nippard and Chris Barakat</h2>
+        <form className="">
+          <div className="grid gap-1 mb-6 md:grid-cols-1">
             <div>
               <label className="block">Age (years)</label>
               <input className="block w-full" type="text" name="age" defaultValue={bb.age} onChange={handleChange}/>
+            </div>
+            <div>
+              <span className="block">Gender</span>
+              <input id="default-checkbox" type="checkbox" value="" checked={bb.isMale} name="isMale" onChange={handleCheck} class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300  dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
+              <label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Are you a dude?</label>
             </div>
             <div>
               <label className="block">Height (cm)</label>
@@ -81,11 +94,11 @@ function Calculator() {
           </div>
         </form>
       </div>
-      <div className="bg-blue-100 rounded-md">
-        <span className="block">Total Calories: {calories}</span>
-        <span className="block">Protein: {protein}</span>
-        <span className="block">Fat: {fat}</span>
-        <span className="block">Carbs: {carbs}</span>
+      <div className="">
+        <span className="block font-bold">Total Calories: {calories}</span>
+        <span className="block bg-red-100">Protein: {protein} g</span>
+        <span className="block bg-green-100">Fat: {fat} g</span>
+        <span className="block bg-blue-100">Carbs: {carbs} g</span>
       </div>
     </div>
   );
